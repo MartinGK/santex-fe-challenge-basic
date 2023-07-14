@@ -1,0 +1,37 @@
+query GetProducts {
+  products(options: { take: 10 }) {
+    items {
+      id
+      name
+      description
+      variants {
+        price
+        priceWithTax
+      }
+      featuredAsset {
+        preview
+      }
+    }
+  }
+}
+
+query GetCurrentOrder {
+  activeOrder {
+    id
+    code
+    state
+    total
+    lines {
+      id
+      quantity
+      featuredAsset {
+        preview
+      }
+      productVariant {
+        id
+        name
+        price
+      }
+    }
+  }
+}

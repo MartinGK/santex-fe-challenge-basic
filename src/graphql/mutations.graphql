@@ -1,0 +1,5 @@
+mutation AddItemToOrder($productId: ID!, $quantity: Int!) {
+  addItemToOrder(productVariantId: $productId, quantity: $quantity) {
+    __typename
+  }
+}
