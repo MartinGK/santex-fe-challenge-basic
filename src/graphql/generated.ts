@@ -3309,7 +3309,7 @@ export const AddItemToOrderDocument = gql`
     `;
 export const GetProductsDocument = gql`
     query GetProducts {
-  products(options: {take: 10}) {
+  products(options: {take: 20}) {
     items {
       id
       name

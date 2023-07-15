@@ -1,16 +1,24 @@
+fragment AssetData on Asset {
+  preview
+}
+
+fragment ItemsData on Items {
+  id
+  name
+  description
+  variants {
+    price
+    priceWithTax
+  }
+  featuredAsset {
+    ...AssetData
+  }
+}
+
 query GetProducts {
   products(options: { take: 10 }) {
     items {
-      id
-      name
-      description
-      variants {
-        price
-        priceWithTax
-      }
-      featuredAsset {
-        preview
-      }
+      ...ItemsData
     }
   }
 }
@@ -25,7 +33,7 @@ query GetCurrentOrder {
       id
       quantity
       featuredAsset {
-        preview
+        ...AssetData
       }
       productVariant {
         id
