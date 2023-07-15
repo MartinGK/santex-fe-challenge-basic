@@ -14,25 +14,11 @@ import {
   BuyButton,
 } from './styled/ProductsList';
 import { useOrder } from '../hooks/useOrderContext';
-import useStateWithStorage from '../hooks/useStateWithStorage';
 
 export function ProductList() {
   const { loading, error, data } =
     useQuery<GetProductsQuery>(GetProductsDocument);
-  const [_, setTotalPrice] = useStateWithStorage({
-    key: 'totalPrice',
-    defaultValue: 0,
-  });
-
-  const { order, refetchOrders, addItemToOrder } = useOrder();
-
-  useEffect(() => {
-    const totalPrice = order?.activeOrder?.lines.reduce(
-      (acc, cur) => (acc += cur.productVariant.price * cur.quantity),
-      0
-    );
-    if (totalPrice) setTotalPrice(totalPrice);
-  }, [order, setTotalPrice]);
+  const { refetchOrders, addItemToOrder } = useOrder();
 
   const handleBuy = useCallback(
     async (productId: string) => {

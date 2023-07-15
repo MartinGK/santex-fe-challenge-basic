@@ -7,10 +7,9 @@ import {
   GetProductsDocument,
   GetProductsQuery,
   GetCurrentOrderDocument,
-  AddItemToOrderDocument,
-  ErrorResult,
+  AddItemToOrderDocument
 } from '../../graphql/generated';
-import { useOrder, OrderProvider } from '../../hooks/useOrderContext';
+import { OrderProvider } from '../../hooks/useOrderContext';
 import '@testing-library/jest-dom';
 
 test('renders ProductList', async () => {

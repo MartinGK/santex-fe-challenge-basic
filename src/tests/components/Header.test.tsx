@@ -1,43 +1,61 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Header } from '../../components/Header';
-import useStateWithStorage from '../../hooks/useStateWithStorage';
+import { OrderProvider } from '../../hooks/useOrderContext';
+import { GetCurrentOrderDocument } from '../../graphql/generated';
+import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 
-// Mock the useOrder hook
-jest.mock('../../hooks/useOrderContext', () => ({
-    useOrder: jest.fn().mockReturnValue({
-      order: {
-        activeOrder: {
-          lines: [
-            { productVariant: { price: 100 }, quantity: 1 },
-            { productVariant: { price: 200 }, quantity: 2 },
-          ],
-        },
+const getCurrentOrderMock: MockedResponse = {
+  request: {
+    query: GetCurrentOrderDocument,
+  },
+  result: {
+    data: {
+      activeOrder: {
+        id: '1',
+        code: 'ORDER1',
+        state: 'Active',
+        total: 100,
+        lines: [
+          {
+            id: '1',
+            quantity: 1,
+            featuredAsset: {
+              preview: 'https://example.com/test.jpg',
+            },
+            productVariant: {
+              id: '1',
+              name: 'Test Product',
+              price: 100,
+            },
+          },
+        ],
       },
-      refetchOrders: jest.fn(),
-      addItemToOrder: jest.fn(),
-    }),
-  }));
-  
-  // Mock the useStateWithStorage hook
-  jest.mock('../../hooks/useStateWithStorage', () => ({
-    __esModule: true,
-    default: jest.fn().mockReturnValue([0, jest.fn()]),
-  }));
-  
-  
+    },
+  },
+};
+
 describe('Header', () => {
-  beforeEach(() => {
-    (useStateWithStorage as jest.Mock).mockReturnValue([100]);
-  });
-
   it('renders without crashing', () => {
-    render(<Header />);
-    expect(screen.getByAltText('logo')).toBeInTheDocument();
+    const { getByAltText } = render(
+      <MockedProvider mocks={[getCurrentOrderMock]} addTypename={false}>
+        <OrderProvider>
+          <Header />
+        </OrderProvider>
+      </MockedProvider>
+    );
+    expect(getByAltText('logo')).toBeInTheDocument();
   });
 
-  it('displays the total price', () => {
-    render(<Header />);
-    expect(screen.getByText('$ 100')).toBeInTheDocument();
+  it('displays the total price', async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={[getCurrentOrderMock]} addTypename={false}>
+        <OrderProvider>
+          <Header />
+        </OrderProvider>
+      </MockedProvider>
+    );
+    await waitFor(() => getByText('$ 100'));
+    expect(getByText('$ 100')).toBeInTheDocument();
   });
 });
